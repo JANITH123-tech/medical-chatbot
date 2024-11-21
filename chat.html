@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Medical Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f8ff;
+        }
+        #chatlog {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background: white;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .message {
+            margin: 10px 0;
+        }
+        .user {
+            text-align: right;
+            color: blue;
+        }
+        .bot {
+            text-align: left;
+            color: green;
+        }
+        #userInput {
+            width: calc(100% - 120px);
+            max-width: 500px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #sendBtn {
+            width: 100px;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #sendBtn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatlog"></div>
+    <div>
+        <input type="text" id="userInput" placeholder="Describe your symptoms..." />
+        <button id="sendBtn">Send</button>
+    </div>
+
+    <script>
+        document.getElementById('sendBtn').addEventListener('click', function () {
+            const userInput = document.getElementById('userInput').value;
+            if (userInput) {
+                appendMessage('User', userInput);
+                document.getElementById('userInput').value = '';
+                botTyping(true);
+                setTimeout(() => {
+                    processResponse(userInput);
+                    botTyping(false);
+                }, 1000); // Simulate bot thinking time
+            }
+        });
+
+        function appendMessage(sender, message) {
+            const chatlog = document.getElementById('chatlog');
+            const newMessage = document.createElement('div');
+            newMessage.className = `message ${sender.toLowerCase()}`;
+            const timestamp = new Date().toLocaleTimeString();
+            newMessage.innerHTML = `<strong>${sender}:</strong> ${message} <br><small>${timestamp}</small>`;
+            chatlog.appendChild(newMessage);
+            chatlog.scrollTop = chatlog.scrollHeight; // Auto-scroll to the bottom
+        }
+
+        function botTyping(isTyping) {
+            const chatlog = document.getElementById('chatlog');
+            if (isTyping) {
+                const typingMessage = document.createElement('div');
+                typingMessage.id = 'typing';
+                typingMessage.className = 'message bot';
+                typingMessage.innerHTML = `<em>Bot is typing...</em>`;
+                chatlog.appendChild(typingMessage);
+                chatlog.scrollTop = chatlog.scrollHeight;
+            } else {
+                const typingElement = document.getElementById('typing');
+                if (typingElement) typingElement.remove();
+            }
+        }
+
+        function processResponse(input) {
+            let botResponse;
+
+            if (input.toLowerCase().includes('headache')) {
+                botResponse = `It seems you're experiencing a headache. Ensure you stay hydrated and rest. If the headache is severe or persistent, it could indicate a more serious issue like a migraine or tension headache. Please consult a healthcare provider if symptoms worsen.`;
+            } else if (input.toLowerCase().includes('fever')) {
+                botResponse = `A fever is your body's way of fighting infection. Stay hydrated and rest. Monitor your temperature closely. If it exceeds 103°F (39.4°C) or persists for more than 3 days, seek medical attention.`;
+            } else if (input.toLowerCase().includes('cough')) {
+                botResponse = `For a cough, avoid irritants and try warm drinks. Persistent coughs lasting more than 2 weeks could indicate underlying issues like bronchitis or allergies. Consider consulting a doctor.`;
+            } else if (input.toLowerCase().includes('anxiety')) {
+                botResponse = `Managing anxiety involves deep breathing exercises, regular physical activity, and connecting with supportive people. Persistent anxiety may require professional help.`;
+            } else if (input.toLowerCase().includes('sleep')) {
+                botResponse = `Trouble sleeping can often be improved with good sleep hygiene: avoid caffeine late in the day, establish a regular bedtime routine, and ensure your sleep environment is comfortable and dark.`;
+            } else {
+                botResponse = `I'm not entirely sure about that. Could you provide more details? Remember, I'm here to guide, but for specific medical conditions, consulting a healthcare provider is best.`;
+            }
+
+            appendMessage('Bot', botResponse);
+        }
+    </script>
+</body>
+</html>
